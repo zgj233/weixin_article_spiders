@@ -1,0 +1,35 @@
+#alert{
+    position: fixed;
+    z-index: 10;
+    padding: 5px 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    display: none;
+}
+.hav-mar-top-lg{
+    margin-top: 80px;
+}
+.hav-mar-top{
+    margin-top: 30px;
+}
+.control-label {
+    text-align: right;
+    height: 34px;
+    line-height: 34px;
+    margin-bottom: auto;
+}
+.box-lef{
+    border-right: 1px solid #ddd;
+}
+.box-lef label{
+    display: inline-block;
+}
+
+.box-lef div.out-link >p{
+    max-width: 500px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: top;
+    cursor: default;
+}

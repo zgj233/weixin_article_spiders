@@ -1,0 +1,5 @@
+#IDE 生成的文件
+.idea/
+
+#npm 包
+node_modules/

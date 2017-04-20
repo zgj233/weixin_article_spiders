@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>抓包小Demo</title>
+    <link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link href="./index.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="app" class="container-fluid">
+    <div class="row">
+        <div id="alert" class="col-sm-4 col-sm-offset-4 alert">
+
+        </div>
+    </div>
+    <div class="row hav-mar-top-lg">
+        <div class="col-sm-12">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        网址
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <input v-model="v_platform" class="form-control" type="text" @keyup.enter="do_search">
+                            <div class="input-group-btn">
+                                <button id="search_btn" data-loading-text="Loading..." type="button" @click="do_search" class="btn btn-info">
+                                    <i class="fa fa-search"></i> 搜索
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 hav-mar-top control-label">
+                        文章内容
+                    </label>
+                    <div class="col-sm-9 hav-mar-top">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-sm-12 box-lef">
+                                        <h2>标题：  {{items.title}}</h2>
+                                        <p>封面：  <img :src="items.cover"></p>
+                                        <p>摘要：  {{items.summary}}</p>
+                                        <p>作者：  {{items.author}}</p>
+                                        <p>时间：  {{items.time}}</p>
+                                        <div>
+                                            <p>内容：  </p>
+
+                                            <div v-for="item in items.entry">
+                                                <img :src="item.content" v-if="item.contentType ===1">
+                                                <p v-if="item.contentType ===0">
+                                                    {{item.content}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="./jquery-3.2.0.min.js"></script>
+<script src="./bootstrap/js/bootstrap.min.js"></script>
+<script src="./vue.min.js"></script>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                items:[],
+                v_platform: null,
+            }
+        },
+        methods: {
+            'do_search': function () {
+                $('#search_btn').button('loading');
+
+                var self = this;
+                doSearch(self);
+            },
+        },
+        mounted: function () {
+
+        }
+    });
+
+    function doSearch(obj) {
+        var _data = {
+            url : obj.v_platform
+        };
+        $.ajax({
+            url: './article',
+            type: 'get',
+            data: _data,
+            success: function (res) {
+                if (res.code === 200) {
+                    alertMsg('success','所有图片已经成功获取， 并且被存入list 文件夹');
+                    obj.items = res.rows;
+                }
+                else {
+                    alertMsg('danger','出错了');
+                }
+
+                $('#search_btn').button('reset');
+
+            }
+        })
+    }
+
+
+    function alertMsg(css,text){
+        $('#alert').removeClass('alert-danger');
+        $('#alert').removeClass('alert-success');
+        $('#alert').removeClass('alert-warning');
+        $('#alert').addClass('alert-'+ css);
+        $('#alert').text(text);
+        $('#alert').slideDown(500,function(){});
+    }
+
+</script>
+
+</body>
+</html>
