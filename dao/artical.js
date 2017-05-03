@@ -138,6 +138,9 @@ function filterWeixinArticle(html, res) {
             order++;
         }
     });
+
+    my_span_arr.splice(0,1);        //删除第一行
+
     var my = {
         title: my_title,
         cover: back_arr[0],

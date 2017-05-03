@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>抓包小Demo</title>
+    <link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link href="./index.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="app" class="container-fluid">
+    <div class="row">
+        <div id="alert" class="col-sm-4 col-sm-offset-4 alert">
+            ssss
+        </div>
+    </div>
+    <div class="row hav-mar-top-lg">
+        <div class="col-sm-12">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        搜索
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <input v-model="v_platform" class="form-control" type="text" @keyup.enter="do_search">
+                            <div class="input-group-btn">
+                                <button type="button" @click="do_search" class="btn btn-info">
+                                    <i class="fa fa-search"></i> 搜索
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 hav-mar-top control-label">
+                        文章内容
+                    </label>
+                    <div class="col-sm-9 hav-mar-top">
+                        <ul class="list-group">
+                            <li v-for="(item ,it) in items" class="list-group-item">
+                                <div class="row">
+                                    <div class="col-sm-10 box-lef">
+                                        <button class="btn btn-default see" type="button">
+                                            <i class="fa fa-sort-desc"></i> 查看
+                                        </button>
+                                        <div>
+                                            <label>文章：</label>
+                                            <p>{{item.title}}</p>
+                                        </div>
+                                        <div class="out-link">
+                                            <label>链接：</label>
+                                            <p :title="item.t_url">{{item.t_url}}</p>
+                                        </div>
+                                        <div>
+                                            <label>简介：</label>
+                                            <p>{{item.about}}</p>
+                                        </div>
+                                        <div>
+                                            <label>来源：</label>
+                                            <p>{{item.article_from}}</p>
+                                        </div>
+                                        <div :id="it" class="info">
+                                            <label>内容：</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2 box-rit">
+                                        <button @click="get_one(it)" class="btn btn-default tool" type="button">
+                                           <i class="fa fa-cloud-download"></i> 抓取此条
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="btn btn-primary tool" type="button" @click="get_all">
+                        <i class="fa fa-download"></i> 抓取所有
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="./jquery-3.2.0.min.js"></script>
+<script src="./vue.min.js"></script>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                items:[],
+                v_platform: null,
+                v_inner: null,
+            }
+        },
+        methods: {
+            'do_search': function () {
+                var self = this;
+                doSearch(self);
+            },
+            'get_one': function (x){
+                var self = this;
+                do_getOne(self,x);
+            },
+            'get_all': function(){
+                alertMsg('warning','此功能还在开发中');
+            }
+        },
+        mounted: function () {
+
+        }
+    });
+
+    function doSearch(obj) {
+        var _data = {
+            type:2,
+            name:obj.v_platform
+        };
+        $.ajax({
+            url: './article',
+            type: 'get',
+            data: _data,
+            success: function (res) {
+                if (res.code === 200) {
+                    obj.items = res.rows;
+                }
+                else {
+                    alertMsg('danger','出错了');
+                }
+            }
+        })
+    }
+
+    function do_getOne(obj, x){
+        var _data = {
+            link: obj.items[x].t_url
+        };
+        $.ajax({
+            url: './articleOne',
+            type: 'post',
+            data: _data,
+            success: function (res) {
+                if (res.code === 200) {
+                    alertMsg('success','成功! 后台已经生成JSON格式的文件');
+                    var result = res.rows.info;
+                    result.forEach(function(item){
+                       $('#'+x).append('<p>'+item+'</p>');
+                    });
+                    $('#'+x).parent().find('.see').css('display','inline-block');
+                    see();
+
+                }
+                else {
+                    alertMsg('danger','出错了');
+                }
+            }
+        })
+    }
+
+    function alertMsg(css,text){
+        $('#alert').removeClass('alert-danger');
+        $('#alert').removeClass('alert-success');
+        $('#alert').removeClass('alert-warning');
+        $('#alert').addClass('alert-'+ css);
+        $('#alert').text(text);
+        $('#alert').slideDown(500,function(){
+           setTimeout(function(){
+               $('#alert').slideUp();
+           },1500)
+        });
+    }
+
+    function see(){
+        var judge = true;
+
+        $('.see').off('click');
+        $('.see').on('click',function(){
+            console.log('asd');
+            if(judge){
+                $(this).parent().find('.info').css('display','block');
+                judge = false;
+            }
+            else {
+                $(this).parent().find('.info').css('display','none');
+                judge =true;
+
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
