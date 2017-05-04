@@ -164,7 +164,7 @@ function filterWeixinArticle(html, res) {
         function (imgItem, callback) {
             i_url = imgItem.url;
             i_type = imgItem.type;
-            filename = './res/list/' + d_str + 'img_' + i + '.' + i_type;
+            filename = './res/img-txt/' + d_str + 'img_' + i + '.' + i_type;
             request
                 .get(i_url, function (err) {
                     if (err) {
@@ -190,7 +190,7 @@ function filterWeixinArticle(html, res) {
         }
     );
 
-    fs.writeFile('./res/list/' + d_str + '.json', JSON.stringify(my), function (err) {
+    fs.writeFile('./res/img-txt/' + d_str + '.json', JSON.stringify(my), function (err) {
         if (err) {
             console.log(err);
         }
